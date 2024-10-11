@@ -1,0 +1,14 @@
+{
+  "quoteProps": "consistent",
+  "singleQuote": true,
+  "tabWidth": 2,
+  "overrides": [
+    {
+      "files": ["./src/**/*.vue"],
+      "options": {
+        "printWidth": 100,
+        "semi": false
+      }
+    }
+  ]
+}
