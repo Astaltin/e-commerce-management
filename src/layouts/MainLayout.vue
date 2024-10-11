@@ -1,106 +1,67 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+  <q-layout>
+    <q-header class="bg-white" reveal>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="toggleLeftDrawer"
-        />
+        <q-toolbar-title class="text-weight-medium text-dark">Dashboard</q-toolbar-title>
 
-        <q-toolbar-title>
-          Quasar App
-        </q-toolbar-title>
+        <q-btn-dropdown class="text-dark" icon="account_circle" flat rounded>
+          <q-list>
+            <template v-for="option of userMenuOptions" :key="option.label">
+              <template v-if="option.label === 'Log out'">
+                <q-item>
+                  <q-item-section>
+                    <q-btn
+                      class="bg-dark text-left"
+                      text-color="white"
+                      :label="option.label"
+                      flat
+                      no-caps
+                    />
+                  </q-item-section>
+                </q-item>
+              </template>
 
-        <div>Quasar v{{ $q.version }}</div>
+              <template v-else>
+                <q-item clickable v-close-popup>
+                  <q-item-section>
+                    <q-item-label>{{ option.label }}</q-item-label>
+                  </q-item-section>
+                </q-item>
+              </template>
+            </template>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="leftDrawerOpen"
-      show-if-above
-      bordered
-    >
-      <q-list>
-        <q-item-label
-          header
-        >
-          Essential Links
-        </q-item-label>
-
-        <EssentialLink
-          v-for="link in linksList"
-          :key="link.title"
-          v-bind="link"
-        />
-      </q-list>
-    </q-drawer>
-
     <q-page-container>
-      <router-view />
+      <q-page padding>
+        <router-view />
+      </q-page>
     </q-page-container>
+
+    <q-footer class="bg-white" bordered reveal>
+      <q-tabs class="text-grey" active-color="dark" v-model="tab" narrow-indicator no-caps>
+        <q-tab
+          v-for="tab of navigationTabs"
+          :key="tab.name"
+          :name="tab.name"
+          :icon="tab.icon"
+          :label="tab.label"
+        />
+      </q-tabs>
+    </q-footer>
   </q-layout>
 </template>
 
 <script setup>
 import { ref } from 'vue'
-import EssentialLink from 'components/EssentialLink.vue'
 
-defineOptions({
-  name: 'MainLayout'
-})
+const userMenuOptions = [{ label: 'Profile' }, { label: 'Settings' }, { label: 'Log out' }]
 
-const linksList = [
-  {
-    title: 'Docs',
-    caption: 'quasar.dev',
-    icon: 'school',
-    link: 'https://quasar.dev'
-  },
-  {
-    title: 'Github',
-    caption: 'github.com/quasarframework',
-    icon: 'code',
-    link: 'https://github.com/quasarframework'
-  },
-  {
-    title: 'Discord Chat Channel',
-    caption: 'chat.quasar.dev',
-    icon: 'chat',
-    link: 'https://chat.quasar.dev'
-  },
-  {
-    title: 'Forum',
-    caption: 'forum.quasar.dev',
-    icon: 'record_voice_over',
-    link: 'https://forum.quasar.dev'
-  },
-  {
-    title: 'Twitter',
-    caption: '@quasarframework',
-    icon: 'rss_feed',
-    link: 'https://twitter.quasar.dev'
-  },
-  {
-    title: 'Facebook',
-    caption: '@QuasarFramework',
-    icon: 'public',
-    link: 'https://facebook.quasar.dev'
-  },
-  {
-    title: 'Quasar Awesome',
-    caption: 'Community Quasar projects',
-    icon: 'favorite',
-    link: 'https://awesome.quasar.dev'
-  }
+const navigationTabs = [
+  { name: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+  { name: 'products', icon: 'add_box', label: 'Products' },
 ]
-
-const leftDrawerOpen = ref(false)
-
-function toggleLeftDrawer () {
-  leftDrawerOpen.value = !leftDrawerOpen.value
-}
+const tab = ref('dashboard')
 </script>
