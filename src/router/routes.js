@@ -1,3 +1,4 @@
+/** @type {import("vue-router").RouterOptions['routes']} routes */
 const routes = [
   {
     path: '/',
@@ -9,6 +10,10 @@ const routes = [
         component: () => import('src/pages/ProductsPage.vue'),
       },
     ],
+  },
+  {
+    path: '/auth/login',
+    component: () => import('src/pages/auth/LoginPage.vue'),
   },
   {
     path: '/:catchAll(.*)*',
