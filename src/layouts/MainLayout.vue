@@ -2,32 +2,29 @@
   <q-layout>
     <q-header class="bg-white" reveal>
       <q-toolbar>
+        <q-icon name="image" size="md" color="dark" />
         <q-toolbar-title class="text-weight-medium text-dark">Dashboard</q-toolbar-title>
 
-        <q-btn-dropdown class="text-dark" icon="account_circle" flat rounded>
+        <q-btn-dropdown class="text-dark" icon="account_circle" dense flat rounded>
           <q-list>
+            <q-item-label class="text-weight-medium" header>Menu</q-item-label>
+
+            <q-separator />
+
             <template v-for="option of userMenuOptions" :key="option.label">
               <template v-if="option.label === 'Log out'">
-                <q-item>
-                  <q-item-section>
-                    <q-btn
-                      class="bg-dark text-left"
-                      text-color="white"
-                      :label="option.label"
-                      flat
-                      no-caps
-                    />
-                  </q-item-section>
-                </q-item>
+                <q-separator />
               </template>
 
-              <template v-else>
-                <q-item clickable v-close-popup>
-                  <q-item-section>
-                    <q-item-label>{{ option.label }}</q-item-label>
-                  </q-item-section>
-                </q-item>
-              </template>
+              <q-item clickable v-close-popup>
+                <q-item-section avatar>
+                  <q-icon :name="option.icon" />
+                </q-item-section>
+
+                <q-item-section>
+                  <q-item-label>{{ option.label }}</q-item-label>
+                </q-item-section>
+              </q-item>
             </template>
           </q-list>
         </q-btn-dropdown>
@@ -57,7 +54,11 @@
 <script setup>
 import { ref } from 'vue'
 
-const userMenuOptions = [{ label: 'Profile' }, { label: 'Settings' }, { label: 'Log out' }]
+const userMenuOptions = [
+  { label: 'Profile', icon: 'account_circle' },
+  { label: 'Settings', icon: 'settings' },
+  { label: 'Log out', icon: 'logout' },
+]
 
 const navigationTabs = [
   { name: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
