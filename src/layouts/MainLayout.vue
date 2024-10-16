@@ -1,9 +1,8 @@
 <template>
   <q-layout>
-    <q-header class="bg-white" reveal>
-      <q-toolbar>
-        <q-icon name="image" size="md" color="dark" />
-        <q-toolbar-title class="text-weight-medium text-dark">Dashboard</q-toolbar-title>
+    <q-header class="bg-white" bordered reveal>
+      <q-toolbar class="justify-between">
+        <q-img style="max-width: 2em" src="src/assets/tradeon-logo.svg" />
 
         <q-btn-dropdown class="text-dark" icon="account_circle" dense flat rounded>
           <q-list>
@@ -12,11 +11,9 @@
             <q-separator />
 
             <template v-for="option of userMenuOptions" :key="option.label">
-              <template v-if="option.label === 'Log out'">
-                <q-separator />
-              </template>
+              <q-separator v-if="option.label === 'Log out'" />
 
-              <q-item clickable v-close-popup>
+              <q-item :to="option.href" clickable v-close-popup>
                 <q-item-section avatar>
                   <q-icon :name="option.icon" />
                 </q-item-section>
@@ -38,10 +35,17 @@
     </q-page-container>
 
     <q-footer class="bg-white" bordered reveal>
-      <q-tabs class="text-grey" active-color="dark" v-model="tab" narrow-indicator no-caps>
-        <q-tab
+      <q-tabs
+        class="text-grey"
+        active-color="dark"
+        v-model="defaultNavTab"
+        narrow-indicator
+        no-caps
+      >
+        <q-route-tab
           v-for="tab of navigationTabs"
           :key="tab.name"
+          :to="tab.href"
           :name="tab.name"
           :icon="tab.icon"
           :label="tab.label"
@@ -55,14 +59,14 @@
 import { ref } from 'vue'
 
 const userMenuOptions = [
-  { label: 'Profile', icon: 'account_circle' },
-  { label: 'Settings', icon: 'settings' },
-  { label: 'Log out', icon: 'logout' },
+  { href: '/profile', icon: 'account_circle', label: 'Profile' },
+  { href: '/settings', icon: 'settings', label: 'Settings' },
+  { icon: 'logout', label: 'Log out' },
 ]
 
 const navigationTabs = [
-  { name: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
-  { name: 'products', icon: 'add_box', label: 'Products' },
+  { href: '/', name: 'dashboard', icon: 'dashboard', label: 'Dashboard' },
+  { href: '/products', name: 'products', icon: 'add_box', label: 'Products' },
 ]
-const tab = ref('dashboard')
+const defaultNavTab = ref('dashboard')
 </script>
