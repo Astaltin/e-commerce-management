@@ -17,12 +17,9 @@
 </template>
 
 <script setup>
-import { useMeta } from 'quasar'
-
 defineOptions({
   name: 'DashboardPage',
 })
-useMeta({ title: 'Dashboard' })
 
 const cardItems = [
   { title: 'Total Revenue', icon: 'currency_ruble', total: '₱1,213.00' },

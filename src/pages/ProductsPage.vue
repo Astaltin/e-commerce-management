@@ -3,10 +3,6 @@
 </template>
 
 <script setup>
-import { useMeta } from 'quasar'
-
-useMeta({ title: 'Products' })
-
 const rows = [
   {
     name: 'Frozen Yogurt',
