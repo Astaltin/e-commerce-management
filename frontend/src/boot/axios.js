@@ -7,8 +7,33 @@ import axios from 'axios';
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: 'https://api.example.com' });
+const api = axios.create({
+  baseURL: 'http://localhost:8000',
+  headers: { 'Content-Type': 'application/json' },
+});
 
+api.defaults.withXSRFToken = true;
+api.defaults.withCredentials = true;
+
+api.interceptors.request.use(
+  async (config) => {
+    if (!document.cookie.includes('XSRF_TOKEN')) {
+      await getCsrfToken();
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+async function getCsrfToken() {
+  try {
+    await api.get('/sanctum/csrf-cookie');
+  } catch (error) {
+    console.error('CSRF Token:', error);
+  }
+}
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
@@ -21,4 +46,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { api };
+export { api, getCsrfToken };
