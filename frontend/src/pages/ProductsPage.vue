@@ -1,9 +1,41 @@
 <template>
   <q-table :rows="rows" row-key="name" flat bordered />
+  <div>
+    <q-input v-model="name" label="Product Name" />
+    <q-input v-model="description" label="Description" />
+    <q-input v-model="price" label="Price" type="number" />
+    <q-input v-model="category" label="Category" />
+    <q-input v-model="stock" label="Stock" type="number" />
+    <q-btn @click="insertProduct" label="Add Product" />
+  </div>
 </template>
 
 <script setup>
-const rows = [
+import { ref } from 'vue'
+import api from 'src/boot/axios'
+
+const name = ref('')
+const description = ref('')
+const price = ref(0)
+const category = ref('')
+const stock = ref(0)
+
+const insertProduct = async () => {
+  try {
+    const response = await api.post('/products', {
+      name: name.value,
+      description: description.value,
+      price: price.value,
+      category: category.value,
+      stock: stock.value,
+    })
+    console.log('Product added successfully:', response.data)
+  } catch (error) {
+    console.error('Failed to add product:', error)
+  }
+}
+
+const rows = ref([
   {
     name: 'Frozen Yogurt',
     calories: 159,
@@ -104,5 +136,5 @@ const rows = [
     calcium: '12%',
     iron: '6%',
   },
-]
+])
 </script>
