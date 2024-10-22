@@ -15,10 +15,12 @@ const api = axios.create({
 api.defaults.withXSRFToken = true;
 api.defaults.withCredentials = true;
 
+// fetches a new csrf token on every request
 api.interceptors.request.use(
   async (config) => {
-    if (!document.cookie.includes('XSRF_TOKEN')) {
-      await getCsrfToken();
+    const csrfTokenEndpoint = '/sanctum/csrf-cookie';
+    if (config.url !== csrfTokenEndpoint) {
+      await api.get(csrfTokenEndpoint);
     }
     return config;
   },
@@ -27,17 +29,10 @@ api.interceptors.request.use(
   }
 );
 
-async function getCsrfToken() {
-  try {
-    await api.get('/sanctum/csrf-cookie');
-  } catch (error) {
-    console.error('CSRF Token:', error);
-  }
-}
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
- app.config.globalProperties.$axios = axios;
+  app.config.globalProperties.$axios = axios;
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
 
@@ -46,4 +41,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { api, getCsrfToken };
+export { api };

@@ -7,10 +7,9 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
-Route::post('/products', [ProductsController::class, 'create'])->name('products.create');
-Route::delete('/products/{id}', [ProductsController::class, 'destroy'])->name('products.destroy');
+Route::get('/products', [ProductsController::class, 'index'])->name('products.index');
+Route::post('/products', [ProductsController::class, 'create'])->name('products.store');
 Route::put('/products/{id}', [ProductsController::class, 'update'])->name('products.update');
-
-Route::get('/inventory', [ProductsController::class, 'index'])->name('inventory');
+Route::delete('/products/{id}', [ProductsController::class, 'destroy'])->name('products.destroy');
 
 require __DIR__ . '/auth.php';

@@ -14,18 +14,19 @@ class ProductsController extends Controller
     public function index()
     {
         try {
-            $products = Product::with('inventory', 'category')->paginate(5);
+            $products = Product::with(['inventory', 'category'])->get();
 
-            return axios::render('Inventory', [
-                'product' => $products,
+            return response()->json([
+                'products' => $products,
             ]);
         } catch (\Exception $e) {
-            return Inertia::render('Inventory', [
-                'product' => [],
+            return response()->json([
                 'error' => 'Failed to load products. Please try again later.',
-            ]);
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
+
 
     public function create(Request $request)
     {
