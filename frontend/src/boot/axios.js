@@ -1,5 +1,8 @@
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
+import { env } from 'src/utils';
+
+const isDevelopment = import.meta.env.DEV;
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -8,9 +11,11 @@ import axios from 'axios';
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: 'http://localhost',
+  baseURL: env('VITE_BACKEND_URL') || 'http://localhost',
   headers: { 'Content-Type': 'application/json' },
 });
+
+console.log(env('VITE_BACKEND_URL'));
 
 api.defaults.withXSRFToken = true;
 api.defaults.withCredentials = true;
@@ -25,7 +30,9 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error);
+    if (isDevelopment) {
+      console.error('Error during request interception:', error);
+    }
   }
 );
 
