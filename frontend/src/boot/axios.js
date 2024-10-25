@@ -1,5 +1,8 @@
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
+import { env } from 'src/utils';
+
+const isDevelopment = import.meta.env.DEV;
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -8,32 +11,31 @@ import axios from 'axios';
 // "export default () => {}" function below (which runs individually
 // for each client)
 const api = axios.create({
-  baseURL: 'http://localhost',
+  baseURL: env('VITE_BACKEND_URL') || 'http://localhost',
   headers: { 'Content-Type': 'application/json' },
 });
+
+console.log(env('VITE_BACKEND_URL'));
 
 api.defaults.withXSRFToken = true;
 api.defaults.withCredentials = true;
 
+// fetches a new csrf token on every request
 api.interceptors.request.use(
   async (config) => {
-    if (!document.cookie.includes('XSRF_TOKEN')) {
-      await getCsrfToken();
+    const csrfTokenEndpoint = '/sanctum/csrf-cookie';
+    if (config.url !== csrfTokenEndpoint) {
+      await api.get(csrfTokenEndpoint);
     }
     return config;
   },
   (error) => {
-    return Promise.reject(error);
+    if (isDevelopment) {
+      console.error('Error during request interception:', error);
+    }
   }
 );
 
-async function getCsrfToken() {
-  try {
-    await api.get('/sanctum/csrf-cookie');
-  } catch (error) {
-    console.error('CSRF Token:', error);
-  }
-}
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
@@ -46,4 +48,4 @@ export default boot(({ app }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { api, getCsrfToken };
+export { api };

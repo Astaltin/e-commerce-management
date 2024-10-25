@@ -1,48 +1,55 @@
 <template>
   <q-layout>
     <q-page-container>
-      <q-page class="q-mt-xl" padding>
-        <section class="q-pt-lg q-gutter-y-md">
-          <header>
-            <h1 class="q-mb-none text-h6">Log in</h1>
-            <p class="text-weight-regular text-subtitle2 text-grey">Log in to your account.</p>
-          </header>
+      <q-page class="q-px-sm">
+        <section style="height: 100svh" class="column">
+          <div class="grow row justify-center items-center q-pt-lg">
+            <q-img style="max-width: 4em" src="assets/tradeon-logo.svg" />
+          </div>
 
-          <q-form class="q-gutter-y-md" autofocus>
-            <q-input label="Email" type="email" color="dark" outlined v-model="email" />
+          <div class="q-pb-lg q-gutter-y-md">
+            <header>
+              <h1 class="q-mb-none text-h6">Log in</h1>
+              <p class="text-weight-regular text-subtitle2 text-grey">Log in to your account.</p>
+            </header>
 
-            <q-input
-              label="Password"
-              :type="!isPasswordVisible ? 'password' : 'text'"
-              color="dark"
-              outlined
-              v-model="password"
-            >
-              <template v-slot:append>
-                <q-icon
-                  class="cursor-pointer"
-                  :name="!isPasswordVisible ? 'visibility' : 'visibility_off'"
-                  v-on:click="isPasswordVisible = !isPasswordVisible"
-                />
-              </template>
-            </q-input>
+            <q-form class="q-gutter-y-sm" autofocus novalidate @submit="handleLoginSubmit">
+              <q-input
+                label="Email"
+                type="email"
+                color="dark"
+                lazy-rules="ondemand"
+                :disable="isLoading"
+                :rules="authRules.email"
+                debounce
+                outlined
+                v-model="email"
+              />
 
-            <div class="q-mt-xs row items-center justify-between">
-              <q-checkbox label="Remember me?" color="dark" v-model="isRemembered" />
+              <password-input
+                label="Password"
+                color="dark"
+                lazy-rules="ondemand"
+                :disable="isLoading"
+                :rules="authRules.password"
+                debounce
+                outlined
+                v-model="password"
+              />
 
-              <a class="text-blue" href="#">Forgot my password</a>
-            </div>
-
-            <q-btn
-              to="/"
-              label="Log in"
-              class="full-width"
-              color="dark"
-              size="lg"
-              unelevated
-              no-caps
-            />
-          </q-form>
+              <q-btn
+                label="Log in"
+                type="submit"
+                class="q-mb-md full-width"
+                color="dark"
+                size="lg"
+                :disable="isLoading"
+                :loading="isLoading"
+                no-caps
+                unelevated
+              />
+            </q-form>
+          </div>
         </section>
       </q-page>
     </q-page-container>
@@ -50,14 +57,48 @@
 </template>
 
 <script setup>
+import { useQuasar } from 'quasar'
 import { ref } from 'vue'
+import { isNavigationFailure, useRouter } from 'vue-router'
+
+import PasswordInput from 'src/components/PasswordInput.vue'
+import { useAuthStore } from 'src/stores/authStore'
+import authRules from 'src/validation/authRules'
 
 defineOptions({
   name: 'LoginPage',
 })
 
-const email = ref('')
-const password = ref('')
-const isPasswordVisible = ref(false)
-const isRemembered = ref(false)
+const isProduction = import.meta.env.PROD
+
+const isLoading = ref(false)
+const email = ref(isProduction ? '' : 'test@gmail.com')
+const password = ref(isProduction ? '' : 'test12345')
+
+const $q = useQuasar()
+const auth = useAuthStore()
+const router = useRouter()
+
+const handleLoginSubmit = async () => {
+  isLoading.value = true
+
+  const data = { email: email.value, password: password.value }
+
+  try {
+    const isLoggedIn = await auth.login(data)
+    if (isLoggedIn) {
+      await router.replace({ name: 'dashboard' })
+    } else {
+      $q.notify('Login request failed.')
+    }
+  } catch (error) {
+    if (isNavigationFailure(error)) {
+      if (isProduction) console.error('Navigation failure:', error)
+    } else {
+      throw error
+    }
+  } finally {
+    isLoading.value = false
+  }
+}
 </script>
