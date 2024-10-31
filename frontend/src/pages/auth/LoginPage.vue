@@ -72,8 +72,8 @@ defineOptions({
 const isProduction = import.meta.env.PROD
 
 const isLoading = ref(false)
-const email = ref(isProduction ? '' : 'test@gmail.com')
-const password = ref(isProduction ? '' : 'test12345')
+const email = ref(isProduction ? '' : 'admin@gmail.com')
+const password = ref(isProduction ? '' : 'admin')
 
 const $q = useQuasar()
 const auth = useAuthStore()

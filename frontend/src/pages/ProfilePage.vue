@@ -65,9 +65,9 @@ const isProduction = import.meta.env.PROD
 const $q = useQuasar()
 const auth = useAuthStore()
 
-const currentPassword = ref(isProduction ? '' : 'test')
-const newPassword = ref(isProduction ? '' : 'test12345')
-const confirmPassword = ref(isProduction ? '' : 'test12345')
+const currentPassword = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
 
 const handlePasswordUpdate = async () => {
   const data = {
