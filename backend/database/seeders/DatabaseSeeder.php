@@ -2,9 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
+use App\Models\Inventory;
+use App\Models\Product;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -13,6 +17,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // for creating dummy users
         User::factory()->create([
             'name' => 'Test User',
             'email' => 'test@example.com',
@@ -22,5 +27,15 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@gmail.com',
             'password' => 'admin'
         ]);
+
+        // for creating dummy products
+        $categories = Category::factory()->count(5)->create();
+        Product::factory()->count(25)
+            ->create()->each(function ($product) use ($categories) {
+                $product->category_id = $categories->random()->id;
+                $product->save();
+
+                Inventory::factory()->create(['product_id' => $product->id]);
+            });
     }
 }
