@@ -1,6 +1,6 @@
-<?
+<?php
 
-namespace App\Http\Controllers\api;
+namespace App\Http\Controllers\Api;
 
 use App\Models\CartItem;
 use App\Models\Flavor;
@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use App\Http\Controllers\Controller;
+
 
 class CartItemController extends Controller
 {
