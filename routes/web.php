@@ -1,79 +1,72 @@
 <?php
 
-use App\Http\Controllers\AdminContactController;
-use App\Http\Controllers\AdminController;
-use App\Http\Controllers\AdminFlavorController;
-use App\Http\Controllers\AdminOrderController;
-use App\Http\Controllers\AdminProductController;
-use App\Http\Controllers\CartItemController;
-use App\Http\Controllers\ContactController;
-use App\Http\Controllers\OrderController;
-use App\Http\Controllers\ProductController;
-use App\Http\Controllers\RegisterController;
-use App\Http\Controllers\SessionController;
+use App\Http\Controllers\Api\AdminContactController;
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AdminFlavorController;
+use App\Http\Controllers\Api\AdminOrderController;
+use App\Http\Controllers\Api\AdminProductController;
+use App\Http\Controllers\Api\CartItemController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\SessionController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+// API Routes with version prefix
+Route::prefix('v1')->group(function () {
+    
+    // Public routes
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/search', [ProductController::class, 'search']);
+    Route::post('/register', [RegisterController::class, 'store']);
+    Route::post('/login', [SessionController::class, 'store']);
+    Route::post('/contact', [ContactController::class, 'store']);
 
-Route::view('/', 'pages.index')->name('home');
-Route::view('/about', 'pages.about');
+    // Authenticated routes
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [SessionController::class, 'destroy']);
+        Route::get('/overview', [SessionController::class, 'index']);
+        Route::get('/profile', [SessionController::class, 'edit']);
+        Route::patch('/profile', [SessionController::class, 'update']);
 
-Route::get('/contact', [ContactController::class, 'create']);
-Route::post('/contact', [ContactController::class, 'store']);
+        // Cart routes
+        Route::get('/cart', [CartItemController::class, 'index'])->middleware('notadmin');
+        Route::post('/cart', [CartItemController::class, 'store'])->middleware('notadmin');
+        Route::patch('/cart/{product:slug}/{flavor:slug}/flavor', [CartItemController::class, 'updateFlavor'])->middleware('notadmin');
+        Route::patch('/cart/{product:slug}/{flavor:slug}/quantity', [CartItemController::class, 'updateQuantity'])->middleware('notadmin');
+        Route::patch('/cart/{product:slug}/{flavor:slug}/add', [CartItemController::class, 'incrementQuantity'])->middleware('notadmin');
+        Route::patch('/cart/{product:slug}/{flavor:slug}/subtract', [CartItemController::class, 'decrementQuantity'])->middleware('notadmin');
+        Route::delete('/cart/{product:slug}/{flavor:slug}', [CartItemController::class, 'destroy'])->middleware('notadmin');
 
-Route::get('/menu', [ProductController::class, 'index']);
-Route::get('/results', [ProductController::class, 'search']);
+        // Order routes
+        Route::post('/orders', [OrderController::class, 'store']);
+        Route::get('/orders/{order:slug}', [OrderController::class, 'show']);
+        Route::patch('/orders/{order:slug}', [OrderController::class, 'update']);
+    });
 
-Route::get('/register', [RegisterController::class, 'create'])->middleware('guest');
-Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
+    // Admin routes
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin', [AdminController::class, 'index']);
 
-Route::get('/login', [SessionController::class, 'create'])->name('login')->middleware('guest');
-Route::post('/login', [SessionController::class, 'store'])->middleware('guest');
-Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth');
+        // Admin flavors
+        Route::get('/admin/flavors', [AdminFlavorController::class, 'index']);
+        Route::post('/admin/flavors', [AdminFlavorController::class, 'store']);
+        Route::patch('/admin/flavors/{flavor:slug}', [AdminFlavorController::class, 'update']);
+        Route::delete('/admin/flavors/{flavor:slug}', [AdminFlavorController::class, 'destroy']);
 
-Route::get('/overview', [SessionController::class, 'index'])->middleware('auth');
-Route::get('/profile', [SessionController::class, 'edit'])->middleware('auth');
-Route::patch('/profile', [SessionController::class, 'update'])->middleware('auth');
+        // Admin products
+        Route::get('/admin/products', [AdminProductController::class, 'index']);
+        Route::post('/admin/products', [AdminProductController::class, 'store']);
+        Route::patch('/admin/products/{product:slug}', [AdminProductController::class, 'update']);
+        Route::delete('/admin/products/{product:slug}', [AdminProductController::class, 'destroy']);
 
-Route::get('/cart', [CartItemController::class, 'index'])->middleware('auth')->middleware('notadmin');
-Route::post('/cart', [CartItemController::class, 'store'])->middleware('auth')->middleware('notadmin');
-Route::patch('/cart/{product:slug}/{flavor:slug}/', [CartItemController::class, 'updateFlavor'])->middleware('auth')->middleware('notadmin');
-Route::patch('/cart/{product:slug}/{flavor:slug}/quantity', [CartItemController::class, 'updateQuantity'])->middleware('auth')->middleware('notadmin');
-Route::patch('/cart/{product:slug}/{flavor:slug}/add', [CartItemController::class, 'incrementQuantity'])->middleware('auth')->middleware('notadmin');
-Route::patch('/cart/{product:slug}/{flavor:slug}/subtract', [CartItemController::class, 'decrementQuantity'])->middleware('auth')->middleware('notadmin');
-Route::delete('/cart/{product:slug}/{flavor:slug}', [CartItemController::class, 'destroy'])->middleware('auth')->middleware('notadmin');
+        // Admin orders
+        Route::get('/admin/orders', [AdminOrderController::class, 'index']);
+        Route::patch('/admin/orders/{order:slug}', [AdminOrderController::class, 'update']);
+        Route::get('/admin/orders/{order:slug}', [AdminOrderController::class, 'show']);
 
-Route::post('/orders', [OrderController::class, 'store'])->middleware('auth');
-Route::get('/orders/{order:slug}', [OrderController::class, 'show'])->middleware('auth');
-Route::patch('/orders/{order:slug}', [OrderController::class, 'update'])->middleware('auth');
-
-Route::get('/admin', [AdminController::class, 'index'])->middleware('admin');
-
-Route::get('/admin/flavors', [AdminFlavorController::class, 'index'])->middleware('admin');
-Route::get('/admin/flavors/create', [AdminFlavorController::class, 'create'])->middleware('admin');
-Route::post('/admin/flavors', [AdminFlavorController::class, 'store'])->middleware('admin');
-Route::get('/admin/flavors/{flavor:slug}/edit', [AdminFlavorController::class, 'edit'])->middleware('admin');
-Route::patch('/admin/flavors/{flavor:slug}', [AdminFlavorController::class, 'update'])->middleware('admin');
-Route::delete('/admin/flavors/{flavor:slug}', [AdminFlavorController::class, 'destroy'])->middleware('admin');
-
-Route::get('/admin/products', [AdminProductController::class, 'index'])->middleware('admin');
-Route::get('/admin/products/create', [AdminProductController::class, 'create'])->middleware('admin');
-Route::post('/admin/products', [AdminProductController::class, 'store'])->middleware('admin');
-Route::get('/admin/products/{product:slug}/edit', [AdminProductController::class, 'edit'])->middleware('admin');
-Route::patch('/admin/products/{product:slug}', [AdminProductController::class, 'update'])->middleware('admin');
-Route::delete('/admin/products/{product:slug}', [AdminProductController::class, 'destroy'])->middleware('admin');
-
-Route::get('/admin/orders', [AdminOrderController::class, 'index'])->middleware('admin');
-Route::patch('/admin/orders/{order:slug}', [AdminOrderController::class, 'update'])->middleware('admin');
-Route::get('/admin/orders/{order:slug}', [AdminOrderController::class, 'show'])->middleware('admin');
-
-Route::get('/admin/contacts/', [AdminContactController::class, 'index'])->middleware('admin');
+        // Admin contacts
+        Route::get('/admin/contacts', [AdminContactController::class, 'index']);
+    });
+});
