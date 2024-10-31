@@ -1,19 +1,60 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\CartItemController;
+use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\OrderController;
+use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\SessionController;
+use App\Http\Controllers\Api\AdminContactController;
+use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\AdminFlavorController;
+use App\Http\Controllers\Api\AdminOrderController;
+use App\Http\Controllers\Api\AdminProductController;
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| API Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
-*/
+// API Routes
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
+Route::prefix('v1')->group(function () {
+    // Public routes
+    Route::get('/products', [ProductController::class, 'index']);
+    Route::get('/products/search', [ProductController::class, 'search']);
+    Route::post('/register', [RegisterController::class, 'store']);
+    Route::post('/login', [SessionController::class, 'store']);
+
+    // Authenticated routes
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::post('/logout', [SessionController::class, 'destroy']);
+        Route::get('/cart', [CartItemController::class, 'index']);
+        Route::post('/cart', [CartItemController::class, 'store']);
+        Route::patch('/cart/{product:slug}/{flavor:slug}/flavor', [CartItemController::class, 'updateFlavor']);
+        Route::patch('/cart/{product:slug}/{flavor:slug}/quantity', [CartItemController::class, 'updateQuantity']);
+        Route::patch('/cart/{product:slug}/{flavor:slug}/add', [CartItemController::class, 'incrementQuantity']);
+        Route::patch('/cart/{product:slug}/{flavor:slug}/subtract', [CartItemController::class, 'decrementQuantity']);
+        Route::delete('/cart/{product:slug}/{flavor:slug}', [CartItemController::class, 'destroy']);
+
+        Route::post('/orders', [OrderController::class, 'store']);
+        Route::get('/orders/{order:slug}', [OrderController::class, 'show']);
+        Route::patch('/orders/{order:slug}', [OrderController::class, 'update']);
+    });
+
+    // Admin routes
+    Route::middleware('admin')->group(function () {
+        Route::get('/admin', [AdminController::class, 'index']);
+        Route::get('/admin/flavors', [AdminFlavorController::class, 'index']);
+        Route::post('/admin/flavors', [AdminFlavorController::class, 'store']);
+        Route::patch('/admin/flavors/{flavor:slug}', [AdminFlavorController::class, 'update']);
+        Route::delete('/admin/flavors/{flavor:slug}', [AdminFlavorController::class, 'destroy']);
+
+        Route::get('/admin/products', [AdminProductController::class, 'index']);
+        Route::post('/admin/products', [AdminProductController::class, 'store']);
+        Route::patch('/admin/products/{product:slug}', [AdminProductController::class, 'update']);
+        Route::delete('/admin/products/{product:slug}', [AdminProductController::class, 'destroy']);
+
+        Route::get('/admin/orders', [AdminOrderController::class, 'index']);
+        Route::patch('/admin/orders/{order:slug}', [AdminOrderController::class, 'update']);
+        Route::get('/admin/orders/{order:slug}', [AdminOrderController::class, 'show']);
+
+        Route::get('/admin/contacts', [AdminContactController::class, 'index']);
+    });
 });
