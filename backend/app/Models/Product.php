@@ -9,13 +9,6 @@ class Product extends Model
 {
    use SoftDeletes;
 
-   protected $table = 'products';
-
-   protected $casts = [
-      'price' => 'decimal:2',
-      'category_id' => 'integer'
-   ];
-
    protected $fillable = [
       'name',
       'description',
@@ -29,7 +22,7 @@ class Product extends Model
       return $this->belongsTo(Category::class);
    }
 
-   // 1-1 relationship with Inventory  
+   // 1-1 relationship with Inventory
    public function inventory()
    {
       return $this->hasOne(Inventory::class);

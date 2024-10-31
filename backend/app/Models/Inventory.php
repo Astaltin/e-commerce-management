@@ -8,11 +8,6 @@ class Inventory extends Model
 {
     protected $table = 'inventory';
 
-    protected $casts = [
-        'stock' => 'integer',
-        'product_id' => 'integer'
-    ];
-
     protected $fillable = [
         'stock',
         'product_id'
