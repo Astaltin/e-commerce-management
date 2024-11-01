@@ -4,7 +4,7 @@
       <q-page class="q-px-sm">
         <section style="height: 100svh" class="column">
           <div class="grow row justify-center items-center q-pt-lg">
-            <q-img style="max-width: 4em" src="assets/tradeon-logo.svg" />
+            <q-img style="max-width: 4em" src="/assets/tradeon-logo.svg" />
           </div>
 
           <div class="q-pb-lg q-gutter-y-md">

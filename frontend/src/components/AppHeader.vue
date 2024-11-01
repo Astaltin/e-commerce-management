@@ -1,7 +1,7 @@
 <template>
   <q-header class="bg-white" bordered reveal>
     <q-toolbar class="justify-between">
-      <q-img style="max-width: 2em" src="assets/tradeon-logo.svg" />
+      <q-img style="max-width: 2em" src="/assets/tradeon-logo.svg" />
 
       <q-btn-dropdown class="text-dark" icon="account_circle" dense flat rounded>
         <q-list>
