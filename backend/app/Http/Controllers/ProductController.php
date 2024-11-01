@@ -44,9 +44,7 @@ class ProductController extends Controller
                 'product' => $product
             ], 201);
         } catch (\Throwable $th) {
-            Log::error(
-                'ProductController::store(): ' . 'Failed to create product: ' . $th->getMessage()
-            );
+            Log::error('ProductController::store(): ' . $th->getMessage());
 
             return response()->json([
                 'message' => 'Failed to create product.'
@@ -82,9 +80,7 @@ class ProductController extends Controller
                 'product' => $product
             ]);
         } catch (\Throwable $th) {
-            Log::error(
-                'ProductController::update(): ' . 'Failed to update product: ' . $th->getMessage()
-            );
+            Log::error('ProductController::update(): ' . $th->getMessage());
 
             return response()->json([
                 'message' => 'Failed to update product.'
@@ -101,9 +97,7 @@ class ProductController extends Controller
                 'message' => 'Product deleted successfully.'
             ]);
         } catch (\Throwable $th) {
-            Log::error(
-                'ProductController::destroy(): ' . 'Failed to delete product: ' . $th->getMessage()
-            );
+            Log::error('ProductController::destroy(): ' . $th->getMessage());
 
             return response()->json([
                 'message' => 'Failed to create product.'
