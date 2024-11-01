@@ -10,7 +10,7 @@ return new class extends Migration
    {
       Schema::create('categories', function (Blueprint $table) {
          $table->smallInteger('id')->unsigned()->primary()->autoIncrement();
-         $table->string('name', 64);
+         $table->string('name', 64)->unique();
          $table->timestamps();
       });
 
@@ -18,7 +18,7 @@ return new class extends Migration
          $table->mediumInteger('id')->unsigned()->primary()->autoIncrement();
          $table->string('name', 255);
          $table->text('description')->nullable();
-         $table->decimal('price', 7, 2);
+         $table->decimal('price', 7, 2)->default(0);
          $table->smallInteger('category_id')->unsigned()->nullable();
          $table->timestamps();
          $table->softDeletes();
