@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProductsController;
 
+Route::apiResource('/dashboard', DashboardController::class)
+    ->only('index');
 Route::apiResource('/products', ProductsController::class)
     ->only('index');
 Route::apiResource('/products', ProductController::class)

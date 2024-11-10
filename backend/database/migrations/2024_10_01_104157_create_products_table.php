@@ -12,6 +12,7 @@ return new class extends Migration
          $table->smallInteger('id')->unsigned()->primary()->autoIncrement();
          $table->string('name', 64)->unique();
          $table->timestamps();
+         $table->softDeletes();
       });
 
       Schema::create('products', function (Blueprint $table) {
