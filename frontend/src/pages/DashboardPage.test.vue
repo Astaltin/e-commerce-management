@@ -72,13 +72,11 @@
     <q-card class="col-5 q-mr-md" bordered flat>
       <q-card-section>
         <h3 class="text-h6">Product Count by Category</h3>
-        <!-- <ul> -->
-        <!--   <li v-for="(count, category) in data.total_products_by_category" :key="category"> -->
-        <!--     {{ category }} - {{ count }} products -->
-        <!--   </li> -->
-        <!-- </ul> -->
 
-        <!-- <apexchart type="bar" height="350" :options="chartOptions" :series="series"></apexchart> -->
+        <apexchart
+          :options="totalProductsByCategoryChart.chartOptions"
+          :series="totalProductsByCategoryChart.series"
+        ></apexchart>
       </q-card-section>
     </q-card>
 
@@ -86,11 +84,11 @@
     <q-card class="col-5 q-ml-md" bordered flat>
       <q-card-section>
         <h3 class="text-h6">Inventory Value by Category</h3>
-        <ul>
-          <li v-for="(value, category) in data.total_inventory_values_by_category" :key="category">
-            {{ category }} - {{ formatCurrency(value) }}
-          </li>
-        </ul>
+
+        <apexchart
+          :options="totalInventoryValuesByCategoryChart.chartOptions"
+          :series="totalInventoryValuesByCategoryChart.series"
+        ></apexchart>
       </q-card-section>
     </q-card>
   </section>
@@ -158,10 +156,46 @@ const data = reactive({
   total_stocks: 0,
   low_stock_products: [],
   out_of_stock_products: [],
-  total_products_by_category: {},
+  total_products_by_category: [],
   total_inventory_values_by_category: {},
   recently_added_products: [],
   recently_updated_products: [],
+})
+
+/** @type{import('apexcharts').ApexOptions}*/
+const totalProductsByCategoryChart = reactive({
+  series: [],
+  chartOptions: {
+    chart: {
+      type: 'bar',
+      height: 350,
+    },
+    plotOptions: {
+      bar: {
+        borderRadius: 4,
+        borderRadiusApplication: 'end',
+        horizontal: true,
+      },
+    },
+    dataLabels: { enabled: false },
+  },
+})
+
+const totalInventoryValuesByCategoryChart = reactive({
+  series: [],
+  chartOptions: {
+    chart: {
+      type: 'bar',
+      height: 350,
+    },
+    plotOptions: {
+      bar: {
+        borderRadius: 4,
+        borderRadiusApplication: 'end',
+      },
+    },
+    dataLabels: { enabled: false },
+  },
 })
 
 const loading = ref(true)
@@ -202,6 +236,26 @@ onMounted(() => {
       for (const [k, v] of Object.entries(res.data)) {
         data[k] = v
       }
+
+      totalProductsByCategoryChart.series = [
+        {
+          name: 'total',
+          data: res.data.total_products_by_category.map((item) => ({
+            x: item.name,
+            y: item.count,
+          })),
+        },
+      ]
+
+      totalInventoryValuesByCategoryChart.series = [
+        {
+          name: 'amount',
+          data: res.data.total_inventory_values_by_category.map((item) => ({
+            x: `C${item.id}`,
+            y: item.value,
+          })),
+        },
+      ]
 
       loading.value = false
     } catch (error) {
