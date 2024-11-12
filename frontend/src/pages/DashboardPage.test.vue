@@ -1,6 +1,6 @@
 <template>
   <!-- TOP ROW: Key Metrics Summary -->
-  <section class="q-gutter-sm row">
+  <section class="row" :class="$q.screen.xs ? 'card-gap-sm' : 'card-gap-md'">
     <q-card class="col-grow" bordered flat>
       <q-card-section class="row items-center">
         <q-icon name="inventory" size="32px" class="text-primary" />
@@ -43,7 +43,7 @@
   </section>
 
   <!-- SECOND ROW: Product Inventory Insights -->
-  <section class="q-gutter-sm row">
+  <section class="row" :class="$q.screen.xs ? 'card-gap-sm' : 'card-gap-md'">
     <q-card class="col-grow bg-red text-white" bordered flat>
       <q-card-section>
         <h3 class="text-h6">Low Stock Products</h3>
@@ -67,59 +67,71 @@
   </section>
 
   <!-- MIDDLE SECTION: Category Insights -->
-  <section class="row q-mt-md justify-center">
+  <section class="row" :class="$q.screen.xs ? 'card-gap-sm' : 'card-gap-md'">
     <!-- Left Panel: Product Count by Category -->
-    <q-card class="col-5 q-mr-md" bordered flat>
-      <q-card-section>
-        <h3 class="text-h6">Product Count by Category</h3>
+    <section class="grow">
+      <h3 class="q-mb-xs text-h6">Product Count by Category</h3>
 
-        <apexchart
-          :options="totalProductsByCategoryChart.chartOptions"
-          :series="totalProductsByCategoryChart.series"
-        ></apexchart>
-      </q-card-section>
-    </q-card>
+      <q-card bordered flat>
+        <q-card-section>
+          <apexchart
+            :options="totalProductsByCategoryChart.chartOptions"
+            :series="totalProductsByCategoryChart.series"
+          ></apexchart>
+        </q-card-section>
+      </q-card>
+    </section>
 
     <!-- Right Panel: Inventory Value by Category -->
-    <q-card class="col-5 q-ml-md" bordered flat>
-      <q-card-section>
-        <h3 class="text-h6">Inventory Value by Category</h3>
+    <section class="grow">
+      <h3 class="q-mb-xs text-h6">Inventory Value by Category</h3>
 
-        <apexchart
-          :options="totalInventoryValuesByCategoryChart.chartOptions"
-          :series="totalInventoryValuesByCategoryChart.series"
-        ></apexchart>
-      </q-card-section>
-    </q-card>
+      <q-card bordered flat>
+        <q-card-section>
+          <apexchart
+            :options="totalInventoryValuesByCategoryChart.chartOptions"
+            :series="totalInventoryValuesByCategoryChart.series"
+          ></apexchart>
+        </q-card-section>
+      </q-card>
+    </section>
   </section>
 
   <!-- BOTTOM SECTION: Alerts -->
-  <section class="row q-mt-md justify-center">
+  <section class="row" :class="$q.screen.xs ? 'card-gap-sm' : 'card-gap-md'">
     <!-- Recently Added Products -->
-    <q-card class="col-5 q-mr-md" bordered flat>
-      <q-card-section>
-        <h3 class="text-h6">Recently Added Products</h3>
-        <ul>
-          <li v-for="product in data.recently_added_products" :key="product.id">
-            {{ product.name }} - {{ product.description }} - {{ formatCurrency(product.price) }}
+    <section class="grow">
+      <h3 class="text-h6 q-m-y-none">Recently Added Products</h3>
+
+      <section class="q-gutter-y-md">
+        <q-card bordered flat v-for="product in data.recently_added_products" :key="product.id">
+          <q-card-section class="row justify-between content-center">
+            <p class="q-mb-none" :style="{ maxWidth: '45ch' }">
+              {{ product.name }} - {{ product.description }} ({{ formatCurrency(product.price) }})
+            </p>
+
             <q-btn flat label="View" @click="viewProduct(product)" />
-          </li>
-        </ul>
-      </q-card-section>
-    </q-card>
+          </q-card-section>
+        </q-card>
+      </section>
+    </section>
 
     <!-- Recently Updated Products -->
-    <q-card class="col-5 q-ml-md" bordered flat>
-      <q-card-section>
-        <h3 class="text-h6">Recently Updated Products</h3>
-        <ul>
-          <li v-for="product in data.recently_updated_products" :key="product.id">
-            {{ product.name }} - {{ product.description }} - {{ formatCurrency(product.price) }}
+    <section class="grow">
+      <h3 class="text-h6 q-m-y-none">Recently Updated Products</h3>
+
+      <section class="q-gutter-y-md">
+        <q-card bordered flat v-for="product in data.recently_updated_products" :key="product.id">
+          <q-card-section class="row justify-between content-center">
+            <p class="q-mb-none" :style="{ maxWidth: '45ch' }">
+              {{ product.name }} - {{ product.description }} ({{ formatCurrency(product.price) }})
+            </p>
+
             <q-btn flat label="View" @click="viewProduct(product)" />
-          </li>
-        </ul>
-      </q-card-section>
-    </q-card>
+          </q-card-section>
+        </q-card>
+      </section>
+    </section>
   </section>
 
   <!-- Product Modal (Non-Editable) -->
@@ -271,5 +283,13 @@ onMounted(() => {
 <style scoped>
 .text-center {
   text-align: center;
+}
+
+.card-gap-md {
+  gap: 1rem;
+}
+
+.card-gap-sm {
+  gap: 0.5rem;
 }
 </style>
