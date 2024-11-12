@@ -1,5 +1,36 @@
 <template>
-  <div>
+  <section>
+    <div class="row justify-end">
+      <q-btn
+        class="shadow-none"
+        label="Create"
+        color="dark"
+        shadow
+        @click="isInsertProductModalOpen = !isInsertProductModalOpen"
+      />
+    </div>
+
+    <q-dialog v-model="isInsertProductModalOpen" persistent>
+      <q-card>
+        <q-card-section>
+          <div class="text-h6">Create Product</div>
+
+          <q-input v-model="name" label="Product Name" />
+          <q-input v-model="description" label="Description" />
+          <q-input v-model="price" label="Price" type="number" />
+          <q-input v-model="category" label="Category" />
+          <q-input v-model="stock" label="Stock" type="number" />
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn color="dark" @click="insertProduct" label="Create" :loading="loading" />
+          <q-btn flat label="Close" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+  </section>
+
+  <section>
     <q-table :rows="data" :columns="columns" row-key="id" flat bordered>
       <template v-slot:body-cell-actions="props">
         <div>
@@ -29,20 +60,11 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
-    <div>
-      <q-input v-model="name" label="Product Name" />
-      <q-input v-model="description" label="Description" />
-      <q-input v-model="price" label="Price" type="number" />
-      <q-input v-model="category" label="Category" />
-      <q-input v-model="stock" label="Stock" type="number" />
-      <q-btn @click="insertProduct" label="Add Product" :loading="loading" />
-    </div>
-  </div>
+  </section>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch, watchEffect } from 'vue'
 import { api } from 'src/boot/axios'
 
 const name = ref('')
@@ -97,6 +119,8 @@ const columns = ref([
   },
 ])
 
+const isInsertProductModalOpen = ref(false)
+
 const insertProduct = async () => {
   loading.value = true
   try {
@@ -114,6 +138,7 @@ const insertProduct = async () => {
     console.error('Failed to add product:', error)
   } finally {
     loading.value = false
+    isInsertProductModalOpen.value = false
   }
 }
 
