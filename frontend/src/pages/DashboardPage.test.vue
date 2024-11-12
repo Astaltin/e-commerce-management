@@ -1,67 +1,55 @@
 <template>
   <!-- TOP ROW: Key Metrics Summary -->
   <section class="row" :class="$q.screen.xs ? 'card-gap-sm' : 'card-gap-md'">
-    <q-card class="col-grow" bordered flat>
-      <q-card-section class="row items-center">
-        <q-icon name="inventory" size="32px" class="text-primary" />
-        <div>
-          <h3 class="text-h6">Total Active Products</h3>
-          <p>{{ data.total_products_active }}</p>
-        </div>
-      </q-card-section>
-    </q-card>
+    <KeyMetricsCard
+      color="light-green"
+      :count="data.total_products_active"
+      label="Total Active Products"
+      icon-name="inventory"
+    />
 
-    <q-card class="col-grow" bordered flat>
-      <q-card-section class="row items-center">
-        <q-icon name="delete" size="32px" class="text-negative" />
-        <div>
-          <h3 class="text-h6">Total Deleted Products</h3>
-          <p>{{ data.total_products_deleted }}</p>
-        </div>
-      </q-card-section>
-    </q-card>
+    <KeyMetricsCard
+      color="red"
+      :count="data.total_products_deleted"
+      label="Total Deleted Products"
+      icon-name="delete"
+    />
 
-    <q-card class="col-grow" bordered flat>
-      <q-card-section class="row items-center">
-        <q-icon name="attach_money" size="32px" class="text-positive" />
-        <div>
-          <h3 class="text-h6">Total Stocks Value</h3>
-          <p>{{ formatCurrency(data.total_stocks_value) }}</p>
-        </div>
-      </q-card-section>
-    </q-card>
+    <KeyMetricsCard
+      color="green"
+      :count="formatCurrency(data.total_stocks_value)"
+      label="Total Stocks Value"
+      icon-name="attach_money"
+    />
 
-    <q-card class="col-grow" bordered flat>
-      <q-card-section class="row items-center">
-        <q-icon name="category" size="32px" class="text-primary" />
-        <div>
-          <h3 class="text-h6">Total Categories</h3>
-          <p>{{ data.total_categories }}</p>
-        </div>
-      </q-card-section>
-    </q-card>
+    <KeyMetricsCard
+      color="orange"
+      :count="data.total_categories"
+      label="Total Categories"
+      icon-name="category"
+    />
   </section>
 
   <!-- SECOND ROW: Product Inventory Insights -->
   <section class="row" :class="$q.screen.xs ? 'card-gap-sm' : 'card-gap-md'">
-    <q-card class="col-grow bg-red text-white" bordered flat>
+    <q-card class="col-grow bg-orange-1" flat>
       <q-card-section>
-        <h3 class="text-h6">Low Stock Products</h3>
-        <p>{{ data.low_stock_products }}</p>
+        <p class="q-mb-none text-subtitle1">Low Stock Products</p>
+        <p class="q-mb-none text-bold text-h3">{{ data.low_stock_products }}</p>
       </q-card-section>
     </q-card>
 
-    <q-card class="col-grow bg-orange text-white" bordered flat>
+    <q-card class="col-grow bg-red-1" flat>
       <q-card-section>
-        <h3 class="text-h6">Out of Stock Products</h3>
-        <p>{{ data.out_of_stock_products }}</p>
+        <p class="q-mb-none text-subtitle1">Out of Stock Products</p>
+        <p class="q-mb-none text-bold text-h3">{{ data.out_of_stock_products }}</p>
       </q-card-section>
     </q-card>
 
-    <q-card class="col-grow bg-primary text-white" bordered flat>
+    <q-card class="col-grow bg-light-green-1" flat>
       <q-card-section>
-        <h3 class="text-h6">Total Stocks</h3>
-        <p>{{ data.total_stocks }}</p>
+        <p class="q-mb-none text-subtitle1">Total Stocks</p>
+        <p class="q-mb-none text-bold text-h3">{{ data.total_stocks }}</p>
       </q-card-section>
     </q-card>
   </section>
@@ -70,10 +58,10 @@
   <section class="row" :class="$q.screen.xs ? 'card-gap-sm' : 'card-gap-md'">
     <!-- Left Panel: Product Count by Category -->
     <section class="grow">
-      <h3 class="q-mb-xs text-h6">Product Count by Category</h3>
-
       <q-card bordered flat>
-        <q-card-section>
+        <q-card-section class="column text-grey" style="gap: 1.25em">
+          <span class="text-h6">Product Count by Category</span>
+
           <apexchart
             :options="totalProductsByCategoryChart.chartOptions"
             :series="totalProductsByCategoryChart.series"
@@ -84,10 +72,10 @@
 
     <!-- Right Panel: Inventory Value by Category -->
     <section class="grow">
-      <h3 class="q-mb-xs text-h6">Inventory Value by Category</h3>
-
       <q-card bordered flat>
-        <q-card-section>
+        <q-card-section class="column text-grey" style="gap: 1.25em">
+          <span class="text-h6">Inventory Value by Category</span>
+
           <apexchart
             :options="totalInventoryValuesByCategoryChart.chartOptions"
             :series="totalInventoryValuesByCategoryChart.series"
@@ -105,12 +93,20 @@
 
       <section class="q-gutter-y-md">
         <q-card bordered flat v-for="product in data.recently_added_products" :key="product.id">
-          <q-card-section class="row justify-between content-center">
+          <q-card-section class="row justify-between items-center">
             <p class="q-mb-none" :style="{ maxWidth: '45ch' }">
               {{ product.name }} - {{ product.description }} ({{ formatCurrency(product.price) }})
             </p>
 
-            <q-btn flat label="View" @click="viewProduct(product)" />
+            <q-btn
+              color="grey"
+              icon="arrow_forward_ios"
+              size=".625rem"
+              style="max-width: 2px; max-height: 2px"
+              flat
+              rounded
+              @click="viewProduct(product)"
+            />
           </q-card-section>
         </q-card>
       </section>
@@ -122,12 +118,20 @@
 
       <section class="q-gutter-y-md">
         <q-card bordered flat v-for="product in data.recently_updated_products" :key="product.id">
-          <q-card-section class="row justify-between content-center">
+          <q-card-section class="row justify-between items-center">
             <p class="q-mb-none" :style="{ maxWidth: '45ch' }">
               {{ product.name }} - {{ product.description }} ({{ formatCurrency(product.price) }})
             </p>
 
-            <q-btn flat label="View" @click="viewProduct(product)" />
+            <q-btn
+              color="grey"
+              icon="arrow_forward_ios"
+              size=".625rem"
+              style="max-width: 2px; max-height: 2px"
+              flat
+              rounded
+              @click="viewProduct(product)"
+            />
           </q-card-section>
         </q-card>
       </section>
@@ -135,18 +139,16 @@
   </section>
 
   <!-- Product Modal (Non-Editable) -->
-  <q-dialog v-model="productModalOpen" persistent>
-    <q-card>
+  <q-dialog v-model="productModalOpen">
+    <q-card style="width: 22.5rem">
       <q-card-section>
-        <div class="text-h6">Product Details</div>
-        <div>
-          <div><strong>Name:</strong> {{ selectedProduct.name }}</div>
-          <div><strong>Description:</strong> {{ selectedProduct.description }}</div>
-          <div><strong>Price:</strong> {{ formatCurrency(selectedProduct.price) }}</div>
-        </div>
+        <span class="text-h6">{{ selectedProduct.name }}</span>
+        <p class="text-subtitle2">{{ formatCurrency(selectedProduct.price) }}</p>
+        <p class="text-grey">{{ selectedProduct.description }}</p>
       </q-card-section>
-      <q-card-actions>
-        <q-btn label="Close" @click="closeModal" flat />
+
+      <q-card-actions align="right">
+        <q-btn color="dark" label="Close" no-caps unelevated @click="closeModal" />
       </q-card-actions>
     </q-card>
   </q-dialog>
@@ -159,6 +161,8 @@
 <script setup>
 import { onMounted, reactive, ref } from 'vue'
 import { api } from 'src/boot/axios'
+import KeyMetricsCard from 'src/components/dashboard/KeyMetricsCard.vue'
+import { colors } from 'quasar'
 
 const data = reactive({
   total_products_active: 0,
@@ -182,9 +186,12 @@ const totalProductsByCategoryChart = reactive({
       type: 'bar',
       height: 350,
     },
+    fill: {
+      colors: colors.getPaletteColor('dark'),
+    },
     plotOptions: {
       bar: {
-        borderRadius: 4,
+        borderRadius: 16,
         borderRadiusApplication: 'end',
         horizontal: true,
       },
@@ -200,9 +207,12 @@ const totalInventoryValuesByCategoryChart = reactive({
       type: 'bar',
       height: 350,
     },
+    fill: {
+      colors: colors.getPaletteColor('dark'),
+    },
     plotOptions: {
       bar: {
-        borderRadius: 4,
+        borderRadius: 16,
         borderRadiusApplication: 'end',
       },
     },
@@ -236,6 +246,10 @@ const viewProduct = (product) => {
 
 // Close the modal
 const closeModal = () => {
+  selectedProduct.id = null
+  selectedProduct.name = ''
+  selectedProduct.description = ''
+  selectedProduct.price = 0
   productModalOpen.value = false
 }
 
