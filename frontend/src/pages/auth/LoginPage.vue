@@ -1,13 +1,22 @@
 <template>
   <q-layout>
     <q-page-container>
-      <q-page class="q-px-sm">
+      <q-page
+        class="q-px-sm"
+        :style="{
+          marginInline: 'auto',
+          maxWidth: $q.screen.xs ? null : '26.5625em',
+        }"
+      >
         <section style="height: 100svh" class="column">
           <div class="grow row justify-center items-center q-pt-lg">
             <q-img style="max-width: 4em" src="/assets/tradeon-logo.svg" />
           </div>
 
-          <div class="q-pb-lg q-gutter-y-md">
+          <div
+            class="q-pb-lg q-gutter-y-md"
+            :style="{ paddingBottom: $q.screen.xs ? null : '7.5em' }"
+          >
             <header>
               <h1 class="q-mb-none text-h6">Log in</h1>
               <p class="text-weight-regular text-subtitle2 text-grey">Log in to your account.</p>
