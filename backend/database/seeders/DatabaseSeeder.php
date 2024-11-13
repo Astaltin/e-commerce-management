@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         // for creating dummy products
         $categories = Category::factory()->count(random_int(4, 6))->create();
-        Product::factory()->count(random_int(19, 99))
+        Product::factory()->count(random_int(99, 199))
             ->create()->each(function ($product) use ($categories) {
                 $product->category_id = $categories->random()->id;
                 $product->save();
