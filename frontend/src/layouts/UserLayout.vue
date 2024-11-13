@@ -5,7 +5,7 @@
 
     <!-- TODO: has some weird padding fsr. idk where it came from ;-; -->
     <q-page-container>
-      <q-page :class="$q.screen.xs ? 'q-gutter-y-sm' : 'q-gutter-y-md'" padding>
+      <q-page>
         <router-view />
       </q-page>
     </q-page-container>
